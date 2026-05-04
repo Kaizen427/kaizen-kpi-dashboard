@@ -39,15 +39,24 @@ def get_lark_token():
         json={"app_id": app_id, "app_secret": app_secret},
         timeout=10
     )
-    return resp.json()["tenant_access_token"]
+    data = resp.json()
+    if "tenant_access_token" not in data:
+        st.error(f"Auth error: {data}")
+        st.stop()
+    return data["tenant_access_token"]
 
 @st.cache_data(ttl=300, show_spinner="Loading data from Lark...")
 def load_data():
     token = get_lark_token()
     headers = {"Authorization": f"Bearer {token}"}
-    url = "https://open.larksuite.com/open-apis/sheets/v2/spreadsheets/HxMwsatsKhpmcxtO9Hqlhsh4gFb/values/J1VBBO!A1:U300"
+    range_str = "J1VBBO!A1:U300"
+    url = f"https://open.larksuite.com/open-apis/sheets/v2/spreadsheets/HxMwsatsKhpmcxtO9Hqlhsh4gFb/values/{requests.utils.quote(range_str, safe='')}"
     resp = requests.get(url, headers=headers, params={"valueRenderOption": "FormattedValue"}, timeout=15)
-    rows = resp.json()["data"]["valueRange"]["values"]
+    data = resp.json()
+    if data.get("code", 0) != 0 or "data" not in data:
+        st.error(f"Lark API error: {data.get('msg', data)}")
+        st.stop()
+    rows = data["data"]["valueRange"]["values"]
 
     records = []
     for row in rows[1:]:
