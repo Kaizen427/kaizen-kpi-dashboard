@@ -60,7 +60,7 @@ def load_data():
 
     records = []
     for row in rows[1:]:
-        if len(row) < 6 or not row[4] or row[4] not in ("March", "April", "May"):
+        if len(row) < 6 or not row[4] or row[4] not in ("March", "April", "May", "June"):
             continue
         def g(i):
             try: return float(str(row[i]).replace(",","")) if i < len(row) and row[i] not in (None,"") else 0
@@ -91,7 +91,7 @@ def metric_card(label, value, sub=""):
 # ── Load ────────────────────────────────────────────────────────────────────
 records  = load_data()
 all_bds  = sorted(set(r["bd"] for r in records if r["bd"]))
-all_months = ["March + April + May (Total)", "March", "April", "May"]
+all_months = ["March + April + May + June (Total)", "March", "April", "May", "June"]
 
 # ── Sidebar ─────────────────────────────────────────────────────────────────
 with st.sidebar:
@@ -110,7 +110,7 @@ with st.sidebar:
 filtered = records
 if sel_bd != "All BDs":
     filtered = [r for r in filtered if r["bd"] == sel_bd]
-if sel_month != "March + April + May (Total)":
+if sel_month != "March + April + May + June (Total)":
     filtered = [r for r in filtered if r["month"] == sel_month]
 
 def total(key): return sum(r[key] for r in filtered)
@@ -158,7 +158,7 @@ with f2:
         import pandas as pd
         bd_summary = defaultdict(lambda: defaultdict(float))
         for r in records:
-            if sel_month != "March + April + May (Total)" and r["month"] != sel_month: continue
+            if sel_month != "March + April + May + June (Total)" and r["month"] != sel_month: continue
             bd_summary[r["bd"]]["reg"]    += r["reg"]
             bd_summary[r["bd"]]["efttc"]  += r["efttc"]
             bd_summary[r["bd"]]["tot_tv"] += r["contract_tv"] + r["spot_tv"]
@@ -174,4 +174,4 @@ with f2:
             st.dataframe(pd.DataFrame(rows_df), use_container_width=True, hide_index=True)
 
 st.markdown("---")
-st.caption("📁 [Open KPI Dashboard in Lark](https://up3mczep5h.sg.larksuite.com/wiki/GCDzwr6OpiYqcNkMhonlr9oHgpe?sheet=XmOhq)  ·  Q2 2025 (Mar–May)  ·  Kaizen Team")
+st.caption("📁 [Open KPI Dashboard in Lark](https://up3mczep5h.sg.larksuite.com/wiki/GCDzwr6OpiYqcNkMhonlr9oHgpe?sheet=XmOhq)  ·  Q2 2025 (Mar–Jun)  ·  Kaizen Team")
