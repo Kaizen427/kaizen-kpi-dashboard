@@ -60,7 +60,9 @@ def load_data():
 
     records = []
     for row in rows[1:]:
-        if len(row) < 6 or not row[4] or row[4] not in ("March", "April", "May", "June"):
+        month_raw = row[4]
+        month = "June" if month_raw in ("Jun", "June") else month_raw
+        if len(row) < 6 or not month_raw or month not in ("March", "April", "May", "June"):
             continue
         def g(i):
             try: return float(str(row[i]).replace(",","")) if i < len(row) and row[i] not in (None,"") else 0
@@ -68,7 +70,7 @@ def load_data():
         records.append({
             "bd":      row[0] or "",
             "region":  row[1] or "",
-            "month":   row[4],
+            "month":   month,
             "reg":     g(5),  "ftd": g(6),  "ftt": g(7),  "efttc": g(8),
             "dep":     g(9),  "net_dep": g(10),
             "contract_tv": g(13), "spot_tv": g(17), "net_fees": g(20),
